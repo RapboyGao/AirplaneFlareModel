@@ -207,5 +207,5 @@ func testPrintExampleComputer() async throws {
             Maximum Flare Time: \(example.maximumTimeOfFlareInMinutes * 60) seconds
             Minimum Flare Time: \(example.minimumTimeOfFlareInMinutes * 60) seconds
         """)
-    print(example.keyPoints(using: .sqrtFunction))
+    print(example.keyPoints(using: .piecewiseLinearProfile))
 }
