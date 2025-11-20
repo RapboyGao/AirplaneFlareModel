@@ -15,6 +15,19 @@ public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable 
   /// 垂直速度(英尺/分钟)
   public var verticalSpeedInFeetPerMinute: Double
 
+  /// 飞行路径角度(度)
+  public var fpaInDegrees: Double {
+    get {
+      atan(verticalSpeedInFeetPerMinute / lateralSpeedInFeetPerMinute) * 180 / .pi
+    }
+    set {
+      verticalSpeedInFeetPerMinute =
+        sin(newValue * .pi / 180) * lateralSpeedInFeetPerMinute
+      lateralSpeedInFeetPerMinute =
+        cos(newValue * .pi / 180) * lateralSpeedInFeetPerMinute
+    }
+  }
+
   /// 水平速度(海里/分钟)
   public var lateralSpeedInKnots: Double {
     get { lateralSpeedInFeetPerMinute / 101.26855914 }
