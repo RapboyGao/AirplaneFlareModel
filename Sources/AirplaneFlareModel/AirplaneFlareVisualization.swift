@@ -13,6 +13,10 @@ public struct AirplaneFlareVisualization: View {
     private let heightOfFlareRange = 10.0...50.0
     private let speedRange = 110.0...190.0
 
+    private var keyPoints: [AirplaneFlarePointData] {
+        computer.keyPoints(using: selectedModel)
+    }
+
     public init() {}
 
     public var body: some View {
@@ -41,27 +45,16 @@ public struct AirplaneFlareVisualization: View {
                 .font(.headline)
                 .padding(.horizontal)
 
-            // Height vs Distance Chart
-            let keyPoints = computer.keyPoints(using: selectedModel)
-
             Chart(keyPoints, id: \.id) { point in
                 LineMark(
                     x: .value("Distance (ft)", point.lateralPositionInFeet),
-                    y: .value("Height (ft)", -point.heightDescended)
+                    y: .value(
+                        "Height (ft)",
+                        computer.heightOfFlareInFeet + point.heightDescended)
                 )
                 .foregroundStyle(.blue)
                 .lineStyle(StrokeStyle(lineWidth: 2))
-
-                AreaMark(
-                    x: .value("Distance (ft)", point.lateralPositionInFeet),
-                    y: .value("Height (ft)", -point.heightDescended)
-                )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.blue.opacity(0.3), .blue.opacity(0.1)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ))
+                .interpolationMethod(.catmullRom)
             }
             .frame(height: 300)
             .padding()
@@ -237,7 +230,8 @@ public struct AirplaneFlareVisualization: View {
                 statisticCard(
                     title: "Min Flare Time",
                     value: String(
-                        format: "%.1f min", computer.minimumTimeOfFlareInMinutes
+                        format: "%.2f sec",
+                        computer.minimumTimeOfFlareInMinutes * 60
                     ),
                     color: .green
                 )
@@ -245,16 +239,10 @@ public struct AirplaneFlareVisualization: View {
                 statisticCard(
                     title: "Max Flare Time",
                     value: String(
-                        format: "%.1f min", computer.maximumTimeOfFlareInMinutes
+                        format: "%.2f sec",
+                        computer.maximumTimeOfFlareInMinutes * 60
                     ),
                     color: .orange
-                )
-
-                let keyPoints = computer.keyPoints(using: selectedModel)
-                statisticCard(
-                    title: "Total Points",
-                    value: "\(keyPoints.count)",
-                    color: .purple
                 )
             }
             .padding(.horizontal)

@@ -152,17 +152,17 @@ extension AirplaneFlareComputer {
     {
         var lProfile = self.lateralProfileFunction
         /// 计算 flare 总时间(分钟)
-        let totalTimeOfFlare = lProfile.x(
+        var totalTimeOfFlare = lProfile.x(
             fromIntegral: desiredTouchdownPointFromFlareInFeet)
         /// 确保 flare 总时间在最小和最大时间之间
-        //        totalTimeOfFlare = max(
-        //            minimumTimeOfFlareInMinutes,
-        //            min(maximumTimeOfFlareInMinutes, totalTimeOfFlare))
-        //        /// 修正 flare 总时间(分钟)
-        //        lProfile = LinearFunction(
-        //            point0: SIMD2(0, initialLateralSpeedInFeetPerMinute),
-        //            point1: SIMD2(
-        //                totalTimeOfFlare, touchDownLateralSpeedInFeetPerMinute))
+        totalTimeOfFlare = max(
+            minimumTimeOfFlareInMinutes,
+            min(maximumTimeOfFlareInMinutes, totalTimeOfFlare))
+        /// 修正 flare 总时间(分钟)
+        lProfile = LinearFunction(
+            point0: SIMD2(0, initialLateralSpeedInFeetPerMinute),
+            point1: SIMD2(
+                totalTimeOfFlare, touchDownLateralSpeedInFeetPerMinute))
 
         let vProfile = ThisFlareModel(
             y0: initialVerticalSpeedInFeetPerMinute,
