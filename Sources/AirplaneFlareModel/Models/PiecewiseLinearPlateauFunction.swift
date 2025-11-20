@@ -73,7 +73,7 @@ import Foundation
 /// →   x = a + (targetH - H(a))/y1
 ///
 /// ------------------------------------------------------------
-public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionProtocol {
+public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionBaseProtocol {
 
     // MARK: - Given Conditions
 
@@ -135,7 +135,7 @@ public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionProtocol {
 
     /// Computes y(x) = { k·x + y0   if x ≤ a
     ///                   { y1         if x > a
-    public func y(at x: Double) -> Double {
+    public func y(atX x: Double) -> Double {
         guard !a.isNaN else { return .nan }
         return x <= a ? (k * x + y0) : y1
     }
@@ -147,7 +147,7 @@ public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionProtocol {
     /// For x ≤ a: ∫₀→x (k·t + y0) dt = (k/2)x² + y0·x
     /// For x > a: ∫₀→x y(t) dt = ∫₀→a (k·t + y0) dt + ∫ₐ→x y1 dt
     ///                           = (k/2)a² + y0·a + y1(x - a)
-    public func integral(at x: Double) -> Double {
+    public func integral(atX x: Double) -> Double {
         guard !a.isNaN else { return .nan }
         if x <= a {
             return 0.5 * k * x * x + y0 * x

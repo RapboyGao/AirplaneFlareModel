@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol TimedFlareFunctionProtocol: Codable, Sendable, Hashable {
+public protocol TimedFlareFunctionBaseProtocol: Codable, Sendable, Hashable {
     // MARK: - Given Conditions
 
     /// y(0)
@@ -20,4 +20,12 @@ public protocol TimedFlareFunctionProtocol: Codable, Sendable, Hashable {
     var x1: Double { get set }
 
     init(y0: Double, y1: Double, x1: Double, h1: Double)
+
+    /// ∫0→x y(x) dx
+    /// 可带入时间(分钟数)
+    func integral(atX x: Double) -> Double
+
+    /// y(x)
+    /// 可带入时间(分钟数)
+    func y(atX x: Double) -> Double
 }

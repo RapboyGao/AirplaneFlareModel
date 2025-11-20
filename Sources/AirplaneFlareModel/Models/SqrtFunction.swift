@@ -86,7 +86,7 @@ import Foundation
 /// - Fallback bisection (guaranteed)
 ///
 /// ------------------------------------------------------------
-public struct SqrtFunction: TimedFlareFunctionProtocol {
+public struct SqrtFunction: TimedFlareFunctionBaseProtocol {
 
     // MARK: - Given Conditions
 
@@ -164,7 +164,7 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
     // MARK: - y(x)
 
     /// Computes y(x) = sqrt(kx + b) + a
-    public func y(_ x: Double) -> Double {
+    public func y(atX x: Double) -> Double {
         sqrt(k * x + b) + a
     }
 
@@ -173,7 +173,7 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
     /// Computes ∫₀→x y(t) dt analytically using:
     ///
     /// (2/3k)[(kx+b)^(3/2) − b^(3/2)] + a·x
-    public func integralY(_ x: Double) -> Double {
+    public func integral(atX x: Double) -> Double {
         let term = pow(k * x + b, 1.5) - pow(b, 1.5)
         return (2.0 / (3.0 * k)) * term + a * x
     }
@@ -209,8 +209,8 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
         var low = 0.0
         var high = x1
 
-        let hLow = integralY(low)
-        let hHigh = integralY(high)
+        let hLow = integral(atX: low)
+        let hHigh = integral(atX: high)
 
         // check if target is in range
         if targetH < hLow || targetH > hHigh {
@@ -222,10 +222,10 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
 
         // Newton iteration
         for _ in 0..<maxIter {
-            let f = integralY(x) - targetH
+            let f = integral(atX: x) - targetH
             if abs(f) < tolerance { return x }
 
-            let slope = y(x)  // derivative of integral
+            let slope = y(atX: x)  // derivative of integral
 
             if abs(slope) < 1e-12 { break }
             let newton = x - f / slope
@@ -237,7 +237,7 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
         // fallback bisection
         for _ in 0..<200 {
             let mid = 0.5 * (low + high)
-            let hMid = integralY(mid)
+            let hMid = integral(atX: mid)
             if abs(hMid - targetH) < tolerance { return mid }
             if hMid > targetH { high = mid } else { low = mid }
         }

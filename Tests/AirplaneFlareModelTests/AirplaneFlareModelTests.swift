@@ -47,18 +47,18 @@ func testPiecewiseLinearPlateauFunctionValues() async throws {
     let a = function.a
 
     // Test ramp region (x ≤ a)
-    let yAt0 = function.y(at: 0.0)
+    let yAt0 = function.y(atX: 0.0)
     #expect(abs(yAt0 - testY0) < 1e-10, "y(0) should equal y0")
 
-    let yAtA = function.y(at: a)
+    let yAtA = function.y(atX: a)
     #expect(abs(yAtA - testY1) < 1e-10, "y(a) should equal y1 (continuity)")
 
     // Test plateau region (x > a)
-    let yAtX1 = function.y(at: testX1)
+    let yAtX1 = function.y(atX: testX1)
     #expect(
         abs(yAtX1 - testY1) < 1e-10, "y(x1) should equal y1 in plateau region")
 
-    let yInPlateau = function.y(at: a + 0.01)
+    let yInPlateau = function.y(atX: a + 0.01)
     #expect(
         abs(yInPlateau - testY1) < 1e-10,
         "Function should maintain plateau value")
@@ -75,15 +75,15 @@ func testPiecewiseLinearPlateauIntegral() async throws {
     )
 
     // Test integral at boundaries
-    let integralAt0 = function.integral(at: 0.0)
+    let integralAt0 = function.integral(atX: 0.0)
     #expect(abs(integralAt0) < 1e-10, "Integral at x=0 should be 0")
 
-    let integralAtX1 = function.integral(at: testX1)
+    let integralAtX1 = function.integral(atX: testX1)
     #expect(
         abs(integralAtX1 - testH1) < 1e-8, "Integral at x=x1 should equal h1")
 
     // Test integral at transition point
-    let integralAtA = function.integral(at: function.a)
+    let integralAtA = function.integral(atX: function.a)
     #expect(!integralAtA.isNaN, "Integral at transition point should be valid")
     #expect(
         integralAtA < 0, "Integral should be negative (descending function)")
@@ -124,14 +124,14 @@ func testSqrtFunctionValues() async throws {
     )
 
     // Test function at boundaries
-    let yAt0 = function.y(0.0)
+    let yAt0 = function.y(atX: 0.0)
     #expect(abs(yAt0 - testY0) < 1e-10, "y(0) should equal y0")
 
-    let yAtX1 = function.y(testX1)
+    let yAtX1 = function.y(atX: testX1)
     #expect(abs(yAtX1 - testY1) < 1e-8, "y(x1) should equal y1")
 
     // Test function monotonicity (should be increasing since it's less negative)
-    let yMid = function.y(testX1 / 2.0)
+    let yMid = function.y(atX: testX1 / 2.0)
     #expect(
         yAt0 < yMid && yMid < yAtX1,
         "Function should be monotonically increasing (less negative)")
@@ -147,14 +147,14 @@ func testSqrtFunctionIntegral() async throws {
     )
 
     // Test integral monotonicity (should be decreasing since function is negative)
-    let integralAt0 = function.integralY(0.0)
+    let integralAt0 = function.integral(atX: 0.0)
     #expect(abs(integralAt0) < 1e-10, "Integral at x=0 should be 0")
 
-    let integralAtX1 = function.integralY(testX1)
+    let integralAtX1 = function.integral(atX: testX1)
     #expect(
         abs(integralAtX1 - testH1) < 1e-8, "Integral at x=x1 should equal h1")
 
-    let integralMid = function.integralY(testX1 / 2.0)
+    let integralMid = function.integral(atX: testX1 / 2.0)
     #expect(
         integralAt0 > integralMid && integralMid > integralAtX1,
         "Integral should be monotonically decreasing (function is negative)")
