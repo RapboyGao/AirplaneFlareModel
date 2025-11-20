@@ -17,16 +17,24 @@ public struct AirplaneFlareVisualization: View {
         computer.keyPoints(using: selectedModel)
     }
 
+    private var numberFormat0: FloatingPointFormatStyle<Double> {
+        .number.precision(.fractionLength(0))
+    }
+
+    private var numberFormat1: FloatingPointFormatStyle<Double> {
+        .number.precision(.fractionLength(1))
+    }
+
     public init() {}
 
     public var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Chart Section
-                chartSection
-
                 // Model Selection
                 modelSelectionSection
+                
+                // Chart Section
+                chartSection
 
                 // Parameter Controls
                 parameterControls
@@ -45,18 +53,49 @@ public struct AirplaneFlareVisualization: View {
                 .font(.headline)
                 .padding(.horizontal)
 
-            Chart(keyPoints, id: \.id) { point in
-                LineMark(
-                    x: .value("Distance (ft)", point.lateralPositionInFeet),
-                    y: .value(
-                        "Height (ft)",
-                        computer.heightOfFlareInFeet + point.heightDescended)
-                )
-                .foregroundStyle(.blue)
-                .lineStyle(StrokeStyle(lineWidth: 2))
-                .interpolationMethod(.catmullRom)
+            Chart {
+                ForEach(keyPoints) { p in
+                    LineMark(
+                        x: .value("Distance (ft)", p.lateralPositionInFeet),
+                        y: .value(
+                            "Height (ft)",
+                            computer.heightOfFlareInFeet + p.heightDescended
+                        )
+                    )
+                    .foregroundStyle(.blue)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    .interpolationMethod(.catmullRom)
+                }
             }
-            .frame(height: 300)
+            .chartXAxis {
+                let values = keyPoints.map {
+                    $0.lateralPositionInFeet
+                }
+                AxisMarks(values: values) { x in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let x = x.as(Double.self) {
+                            Text(x, format: numberFormat0)
+                        }
+                    }
+                }
+            }
+            .chartYAxis {
+                let values = keyPoints.map {
+                    computer.heightOfFlareInFeet + $0.heightDescended
+                }
+                AxisMarks(values: values) { x in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let x = x.as(Double.self) {
+                            Text(x, format: numberFormat1)
+                        }
+                    }
+                }
+            }
+            .frame(height: 250)
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
@@ -65,12 +104,42 @@ public struct AirplaneFlareVisualization: View {
             Chart(keyPoints, id: \.id) { point in
                 LineMark(
                     x: .value("Distance (ft)", point.lateralPositionInFeet),
-                    y: .value("Speed (knots)", point.lateralSpeedInKnots)
+                    y: .value(
+                        "Speed (knots)", point.verticalSpeedInFeetPerMinute)
                 )
-                .foregroundStyle(.green)
+                .interpolationMethod(.catmullRom)
+                .foregroundStyle(.orange)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
-            .frame(height: 200)
+            .chartXAxis {
+                let values = keyPoints.map {
+                    $0.lateralPositionInFeet
+                }
+                AxisMarks(values: values) { x in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let x = x.as(Double.self) {
+                            Text(x, format: numberFormat0)
+                        }
+                    }
+                }
+            }
+            .chartYAxis {
+                let values = keyPoints.map {
+                    $0.verticalSpeedInFeetPerMinute
+                }
+                AxisMarks(values: values) { x in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let x = x.as(Double.self) {
+                            Text(x, format: numberFormat1)
+                        }
+                    }
+                }
+            }
+            .frame(height: 250)
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
@@ -271,7 +340,7 @@ public struct AirplaneFlareVisualization: View {
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 public struct AirplaneFlareVisualization_Previews: PreviewProvider {
     public static var previews: some View {
-        NavigationView {
+        NavigationStack {
             AirplaneFlareVisualization()
         }
     }
