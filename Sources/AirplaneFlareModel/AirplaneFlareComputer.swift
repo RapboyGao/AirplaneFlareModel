@@ -76,6 +76,7 @@ public struct AirplaneFlareComputer: Codable, Sendable, Hashable {
     initialSpeedInKnots: Double,
     touchDownSpeedInKnots: Double,
     initialFPAInDegrees: Double,
+    touchDownVerticalSpeedInFeetPerMinute: Double,
     desiredTouchdownPointFromFlareInFeet: Double,
     heightOfFlareInFeet: Double
   ) {
@@ -87,17 +88,25 @@ public struct AirplaneFlareComputer: Codable, Sendable, Hashable {
       initialVerticalSpeedInFeetPerMinute: sin(
         initialFPAInDegrees * .pi / 180)
         * initialSpeedInKnots * 101.26855914,
-      touchDownVerticalSpeedInFeetPerMinute: sin(
-        initialFPAInDegrees * .pi / 180)
-        * touchDownSpeedInKnots * 101.26855914,
+      touchDownVerticalSpeedInFeetPerMinute: touchDownVerticalSpeedInFeetPerMinute,
       desiredTouchdownPointFromFlareInFeet:
         desiredTouchdownPointFromFlareInFeet,
       heightOfFlareInFeet: heightOfFlareInFeet
     )
   }
+
 }
 
 extension AirplaneFlareComputer {
+
+  public static let example = AirplaneFlareComputer(
+    initialSpeedInKnots: 150,
+    touchDownSpeedInKnots: 145,
+    initialFPAInDegrees: -3,
+    touchDownVerticalSpeedInFeetPerMinute: -150,
+    desiredTouchdownPointFromFlareInFeet: 2000,
+    heightOfFlareInFeet: 50
+  )
 
   /// 从 flare 开始到 touchdown 点的最小时间(分钟)
   /// 从initialLateralSpeedInFeetPerMinute 增加到touchDownLateralSpeedInFeetPerMinute
