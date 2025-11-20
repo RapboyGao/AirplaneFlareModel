@@ -125,6 +125,10 @@ public struct LinearFunction: Hashable, Codable, Sendable,
         return (y - b) / k
     }
 
+    public func integral(atX x: Double) -> Double {
+        (k / 2) * (x * x) + b * x
+    }
+
     // ============================================================
     // MARK: x from integral
     // ============================================================
