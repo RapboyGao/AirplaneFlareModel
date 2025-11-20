@@ -139,6 +139,6 @@ extension AirplaneFlareModel {
         verticalSpeedInFeetPerMinute: verticalProfileFunction.y(atX: x)
       )
     }
-    return keyPoints
+    return keyPoints.filter { $0.timeInMinutes <= totalTimeOfFlare }
   }
 }
