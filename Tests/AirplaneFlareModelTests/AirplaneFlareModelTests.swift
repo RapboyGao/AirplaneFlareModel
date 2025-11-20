@@ -184,3 +184,27 @@ func testInvalidParameters() async throws {
         invalidH1.a.isNaN || invalidH1.a <= 0 || invalidH1.a > 0.133,
         "Should fail with invalid h1")
 }
+
+@Test("Linear Function")
+func testLinearFunction() async throws {
+    let linearFunction = LinearFunction(b: 150 * 103, y1: 145 * 103, integralH: 2000)
+    for i in 0...10 {
+        print("在第\(i)秒的积分为", linearFunction.integral(atX: Double(i) / 60))
+    }
+    for i in [0.0, 1000, 1500, 2000] {
+        print("在第积分为\(i), x = ", linearFunction.x(fromIntegral: i))
+    }
+
+}
+
+@Test("Print Example Computer")
+func testPrintExampleComputer() async throws {
+    let example = AirplaneFlareComputer.example
+    print(example)
+    print(
+        """
+            Maximum Flare Time: \(example.maximumTimeOfFlareInMinutes * 60) seconds
+            Minimum Flare Time: \(example.minimumTimeOfFlareInMinutes * 60) seconds
+        """)
+    print(example.keyPoints(using: .sqrtFunction))
+}
