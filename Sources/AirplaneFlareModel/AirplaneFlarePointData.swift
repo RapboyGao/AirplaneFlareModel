@@ -9,14 +9,14 @@ public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable 
   /// 水平位置(英尺)
   public var lateralPositionInFeet: Double
   /// 垂直位置(英尺)
-  public var verticalPositionInFeet: Double
+  public var heightDescended: Double
   /// 水平速度(英尺/分钟)
   public var lateralSpeedInFeetPerMinute: Double
   /// 垂直速度(英尺/分钟)
   public var verticalSpeedInFeetPerMinute: Double
 
   /// 飞行路径角度(度)
-  public var fpaInDegrees: Double {
+  public var fPAInDegrees: Double {
     get {
       atan(verticalSpeedInFeetPerMinute / lateralSpeedInFeetPerMinute) * 180 / .pi
     }
@@ -43,14 +43,14 @@ public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable 
   public init(
     timeInMinutes: Double,
     lateralPositionInFeet: Double,
-    verticalPositionInFeet: Double,
+    heightDescended: Double,
     lateralSpeedInFeetPerMinute: Double,
     verticalSpeedInFeetPerMinute: Double
   ) {
     self.id = UUID()
     self.timeInMinutes = timeInMinutes
     self.lateralPositionInFeet = lateralPositionInFeet
-    self.verticalPositionInFeet = verticalPositionInFeet
+    self.heightDescended = heightDescended
     self.lateralSpeedInFeetPerMinute = lateralSpeedInFeetPerMinute
     self.verticalSpeedInFeetPerMinute = verticalSpeedInFeetPerMinute
   }
