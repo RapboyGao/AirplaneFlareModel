@@ -1,6 +1,8 @@
 import Foundation
 
-public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable {
+public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable,
+  CustomStringConvertible
+{
   /// 唯一标识符
   public var id: UUID
 
@@ -38,6 +40,18 @@ public struct AirplaneFlarePointData: Codable, Sendable, Hashable, Identifiable 
   public var timeInSeconds: Double {
     get { timeInMinutes * 60 }
     set { timeInMinutes = newValue / 60 }
+  }
+
+  public var description: String {
+    """
+    时间(秒): \(timeInSeconds)
+    水平速度(节): \(lateralSpeedInKnots)
+    水平位置(英尺): \(lateralPositionInFeet)
+    垂直位置(英尺): \(heightDescended)
+    垂直速度(英尺/分钟): \(verticalSpeedInFeetPerMinute)
+    飞行路径角度(度): \(fPAInDegrees)
+    \n\n
+    """
   }
 
   public init(

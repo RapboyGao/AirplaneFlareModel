@@ -187,12 +187,13 @@ func testInvalidParameters() async throws {
 
 @Test("Linear Function")
 func testLinearFunction() async throws {
-    let linearFunction = LinearFunction(b: 150 * 103, y1: 145 * 103, integralH: 2000)
+    let linearFunction = LinearFunction(
+        b: 150 * 103, y1: 145 * 103, integralH: 2000)
     for i in 0...10 {
         print("在第\(i)秒的积分为", linearFunction.integral(atX: Double(i) / 60))
     }
     for i in [0.0, 1000, 1500, 2000] {
-        print("在第积分为\(i), x = ", linearFunction.x(fromIntegral: i))
+        print("在第积分为\(i), x = ", linearFunction.x(fromIntegral: i) * 60)
     }
 
 }
