@@ -170,6 +170,11 @@ public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionProtocol {
 
         guard !a.isNaN else { return .nan }
 
+        // Handle the special case where targetH = 0 (should return x = 0)
+        if abs(targetH) < 1e-12 {
+            return 0.0
+        }
+
         // Calculate H(a) = integral at transition point
         let Ha = 0.5 * k * a * a + y0 * a
 
@@ -202,6 +207,6 @@ public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionProtocol {
         // → x = a + (targetH - H(a))/y1
         //
         let x = a + (targetH - Ha) / y1
-        return x >= a ? x : .nan
+        return x >= a && x <= x1 ? x : .nan
     }
 }

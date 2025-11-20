@@ -109,8 +109,8 @@ public struct SqrtFunction: TimedFlareFunctionProtocol {
     public init(y0: Double, y1: Double, x1: Double, h1: Double) {
         self.y0 = y0
         self.y1 = y1
-        self.h1 = x1
-        self.x1 = h1
+        self.x1 = x1
+        self.h1 = h1
     }
 
     // MARK: - Intermediate Quantity
