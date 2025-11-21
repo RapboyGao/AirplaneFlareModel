@@ -27,13 +27,23 @@ public struct AirplaneFlareComputer: Codable, Sendable, Hashable {
   /// 初始水平速度( knot )
   public var initialSpeedInKnots: Double {
     get { initialLateralSpeedInFeetPerMinute / 101.26855914 }
-    set { initialLateralSpeedInFeetPerMinute = newValue * 101.26855914 }
+    set {
+      initialLateralSpeedInFeetPerMinute = newValue * 101.26855914
+      if newValue <= touchDownSpeedInKnots {
+        touchDownSpeedInKnots = newValue - 1
+      }
+    }
   }
 
   /// touchdown水平速度( knot )
   public var touchDownSpeedInKnots: Double {
     get { touchDownLateralSpeedInFeetPerMinute / 101.26855914 }
-    set { touchDownLateralSpeedInFeetPerMinute = newValue * 101.26855914 }
+    set {
+      touchDownLateralSpeedInFeetPerMinute = newValue * 101.26855914
+      if newValue >= initialSpeedInKnots {
+        initialSpeedInKnots = newValue + 1
+      }
+    }
   }
 
   /// 初始飞行路径角度(度)
@@ -185,6 +195,17 @@ extension AirplaneFlareComputer {
     desiredPoints = desiredPoints.filter {
       $0 <= maxDistance
     }
+    // 如果两个数字相差小于100，则保留较大值
+    var filtered: [Double] = []
+    for point in desiredPoints {
+      if let last = filtered.last, point - last < 50 {
+        filtered[filtered.count - 1] = max(last, point)
+      }
+      else {
+        filtered.append(point)
+      }
+    }
+    desiredPoints = filtered
 
     let keyPoints = desiredPoints.map { distance in
       guard distance != maxDistance

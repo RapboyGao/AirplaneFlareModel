@@ -90,7 +90,7 @@ public struct AirplaneFlareVisualization: View {
           AxisTick()
           if let x = x.as(Double.self) {
             AxisValueLabel {
-              Text("\(x, format: numberFormat0) ft")
+              Text("\(x, format: numberFormat0)")
             }
           }
         }
@@ -168,108 +168,73 @@ public struct AirplaneFlareVisualization: View {
       // Vertical Speed Parameters
       parameterSlider(
         title: "Initial Vertical Speed",
-        value: computer.initialVerticalSpeedInFeetPerMinute,
+        value: $computer.initialVerticalSpeedInFeetPerMinute,
         range: initialVerticalSpeedRange,
         unit: "ft/min",
         step: 10
-      ) { newValue in
-        var newComputer = computer
-        newComputer.initialVerticalSpeedInFeetPerMinute = newValue
-        computer = newComputer
-      }
+      )
 
       parameterSlider(
         title: "Touchdown Vertical Speed",
-        value: computer.touchDownVerticalSpeedInFeetPerMinute,
+        value: $computer.touchDownVerticalSpeedInFeetPerMinute,
         range: touchDownVerticalSpeedRange,
         unit: "ft/min",
         step: 5
-      ) { newValue in
-        var newComputer = computer
-        newComputer.touchDownVerticalSpeedInFeetPerMinute = newValue
-        computer = newComputer
-      }
+      )
 
       // Distance Parameters
       parameterSlider(
         title: "Desired Touchdown Distance",
-        value: computer.desiredTouchdownPointFromFlareInFeet,
+        value: $computer.desiredTouchdownPointFromFlareInFeet,
         range: desiredTouchdownPointRange,
         unit: "ft",
         step: 50
-      ) { newValue in
-        var newComputer = computer
-        newComputer.desiredTouchdownPointFromFlareInFeet = newValue
-        computer = newComputer
-      }
+      )
 
       parameterSlider(
         title: "Flare Height",
-        value: computer.heightOfFlareInFeet,
+        value: $computer.heightOfFlareInFeet,
         range: heightOfFlareRange,
         unit: "ft",
         step: 1
-      ) { newValue in
-        var newComputer = computer
-        newComputer.heightOfFlareInFeet = newValue
-        computer = newComputer
-      }
+      )
 
       // Speed Parameters
       parameterSlider(
         title: "Initial Speed",
-        value: computer.initialSpeedInKnots,
+        value: $computer.initialSpeedInKnots,
         range: speedRange,
         unit: "knots",
         step: 1
-      ) { newValue in
-        var newComputer = computer
-        newComputer.initialSpeedInKnots = newValue
-        computer = newComputer
-      }
+      )
 
       parameterSlider(
         title: "Touchdown Speed",
-        value: computer.touchDownSpeedInKnots,
+        value: $computer.touchDownSpeedInKnots,
         range: speedRange,
         unit: "knots",
         step: 1
-      ) { newValue in
-        var newComputer = computer
-        newComputer.touchDownSpeedInKnots = newValue
-        computer = newComputer
-      }
+      )
     }
   }
 
   private func parameterSlider(
     title: String,
-    value: Double,
+    value: Binding<Double>,
     range: ClosedRange<Double>,
     unit: String,
-    step: Double,
-    onChange: @escaping (Double) -> Void
+    step: Double
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Text(title)
           .font(.subheadline)
         Spacer()
-        Text("\(Int(value)) \(unit)")
+        Text("\(value.wrappedValue,format: numberFormat0) \(unit)")
           .font(.caption)
           .foregroundColor(.secondary)
       }
-
-      Slider(
-        value: Binding(
-          get: { value },
-          set: { newValue in
-            onChange(newValue)
-          }
-        ), in: range, step: step
-      ) {
-        Text(title)
-      }
+      Slider(value: value, in: range, step: step)
     }
     .padding(.horizontal)
   }
@@ -289,7 +254,7 @@ public struct AirplaneFlareVisualization: View {
         statisticCard(
           title: "Initial FPA",
           value: String(
-            format: "%.1f°", computer.initialFPAInDegrees),
+            format: "%.2f°", computer.initialFPAInDegrees),
           color: .blue
         )
 
