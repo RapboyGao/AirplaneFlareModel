@@ -117,6 +117,7 @@ extension AirplaneFlareComputer {
         2 * h1
             / (touchDownVerticalSpeedInFeetPerMinute
                 + initialVerticalSpeedInFeetPerMinute)
+            + 1 / 600
     }
 
     /// 从 flare 开始到 touchdown 点的最大时间(分钟)
@@ -124,7 +125,7 @@ extension AirplaneFlareComputer {
     /// x * touchDownLateralSpeedInFeetPerMinute = h1
     /// 所以 x = h1 / touchDownLateralSpeedInFeetPerMinute
     public var maximumTimeOfFlareInMinutes: Double {
-        h1 / touchDownVerticalSpeedInFeetPerMinute
+        h1 / touchDownVerticalSpeedInFeetPerMinute - 1 / 600
     }
 
     public var lateralProfileFunction: LinearFunction {
@@ -190,6 +191,8 @@ extension AirplaneFlareComputer {
                 verticalSpeedInFeetPerMinute: vProfile.y(atX: x)
             )
         }
-        return keyPoints.filter { $0.timeInMinutes <= totalTimeOfFlare }
+        return keyPoints.filter {
+            -$0.heightDescended <= self.heightOfFlareInFeet + 1
+        }
     }
 }

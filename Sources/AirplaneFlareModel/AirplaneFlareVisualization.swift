@@ -32,7 +32,7 @@ public struct AirplaneFlareVisualization: View {
             VStack(spacing: 20) {
                 // Model Selection
                 modelSelectionSection
-                
+
                 // Chart Section
                 chartSection
 
@@ -53,96 +53,89 @@ public struct AirplaneFlareVisualization: View {
                 .font(.headline)
                 .padding(.horizontal)
 
-            Chart {
-                ForEach(keyPoints) { p in
-                    LineMark(
-                        x: .value("Distance (ft)", p.lateralPositionInFeet),
-                        y: .value(
-                            "Height (ft)",
-                            computer.heightOfFlareInFeet + p.heightDescended
-                        )
-                    )
-                    .foregroundStyle(.blue)
-                    .lineStyle(StrokeStyle(lineWidth: 2))
-                    .interpolationMethod(.catmullRom)
-                }
-            }
-            .chartXAxis {
-                let values = keyPoints.map {
-                    $0.lateralPositionInFeet
-                }
-                AxisMarks(values: values) { x in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel {
-                        if let x = x.as(Double.self) {
-                            Text(x, format: numberFormat0)
-                        }
-                    }
-                }
-            }
-            .chartYAxis {
-                let values = keyPoints.map {
-                    computer.heightOfFlareInFeet + $0.heightDescended
-                }
-                AxisMarks(values: values) { x in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel {
-                        if let x = x.as(Double.self) {
-                            Text(x, format: numberFormat1)
-                        }
-                    }
-                }
-            }
-            .frame(height: 250)
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
-
-            // Speed vs Distance Chart
-            Chart(keyPoints, id: \.id) { point in
+            Chart(keyPoints) { p in
                 LineMark(
-                    x: .value("Distance (ft)", point.lateralPositionInFeet),
+                    x: .value("Distance (ft)", p.lateralPositionInFeet),
                     y: .value(
-                        "Speed (knots)", point.verticalSpeedInFeetPerMinute)
+                        "Height (ft)",
+                        computer.heightOfFlareInFeet + p.heightDescended
+                    ),
+                    series: .value("Height", "Height")
+                )
+                .foregroundStyle(.blue)
+                .lineStyle(StrokeStyle(lineWidth: 2))
+                .interpolationMethod(.catmullRom)
+                LineMark(
+                    x: .value(
+                        "Distance (ft)", p.lateralPositionInFeet),
+                    y: .value(
+                        "Verical Speed (knots)",
+                        p.verticalSpeedInFeetPerMinute / 18)
                 )
                 .interpolationMethod(.catmullRom)
                 .foregroundStyle(.orange)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
             .chartXAxis {
-                let values = keyPoints.map {
+                let distances = keyPoints.map {
                     $0.lateralPositionInFeet
                 }
-                AxisMarks(values: values) { x in
+                AxisMarks(values: distances) { x in
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel {
-                        if let x = x.as(Double.self) {
-                            Text(x, format: numberFormat0)
+                    if let x = x.as(Double.self) {
+                        AxisValueLabel {
+                            Text("\(x, format: numberFormat0) ft")
+                        }
+                    }
+                }
+                AxisMarks(position: .top, values: distances) { x in
+                    if let x = x.as(Double.self) {
+                        let thisPoint = keyPoints.first {
+                            $0.lateralPositionInFeet == x
+                        }
+                        if let thisPoint = thisPoint {
+                            AxisValueLabel {
+                                Text(
+                                    "\(thisPoint.timeInMinutes * 60, format: numberFormat1) sec"
+                                )
+                            }
                         }
                     }
                 }
             }
+            .chartXAxisLabel("Distance")
             .chartYAxis {
-                let values = keyPoints.map {
-                    $0.verticalSpeedInFeetPerMinute
+                let heights = keyPoints.map {
+                    computer.heightOfFlareInFeet + $0.heightDescended
                 }
-                AxisMarks(values: values) { x in
+                AxisMarks(values: heights) { y in
                     AxisGridLine()
                     AxisTick()
                     AxisValueLabel {
-                        if let x = x.as(Double.self) {
-                            Text(x, format: numberFormat1)
+                        if let y = y.as(Double.self) {
+                            Text("\(y , format: numberFormat1) ft")
+                        }
+                    }
+                }
+                let scaledVS = keyPoints.map {
+                    $0.verticalSpeedInFeetPerMinute / 18
+                }
+                AxisMarks(values: scaledVS) { y in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let y = y.as(Double.self) {
+                            Text("\(y * 18, format: numberFormat0) ft/min")
                         }
                     }
                 }
             }
-            .frame(height: 250)
+            .frame(height: 500)
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
+
         }
     }
 
