@@ -30,11 +30,11 @@ public struct AirplaneFlareVisualization: View {
   public var body: some View {
     ScrollView {
       VStack(spacing: 20) {
-        // Model Selection
-        modelSelectionSection
-
         // Chart Section
         chartSection
+
+        // Model Selection
+        modelSelectionSection
 
         // Parameter Controls
         parameterControls
