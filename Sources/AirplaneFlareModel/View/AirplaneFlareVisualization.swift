@@ -4,7 +4,7 @@ import SwiftUI
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 public struct AirplaneFlareVisualization: View {
   @State private var computer = AirplaneFlareComputer.example
-  @State private var selectedModel: AirplaneFlareModel = .sqrtFunction
+  @State private var selectedModel: AirplaneFlareModel = .exponentialFlareFunction
 
   // Constants for slider ranges
   private let initialVerticalSpeedRange = -1000.0...(-500.0)
@@ -149,10 +149,9 @@ public struct AirplaneFlareVisualization: View {
         .font(.headline)
 
       Picker("Model", selection: $selectedModel) {
-        Text("Square Root Function").tag(
-          AirplaneFlareModel.sqrtFunction)
-        Text("Piecewise Linear Profile").tag(
-          AirplaneFlareModel.piecewiseLinearProfile)
+        ForEach(AirplaneFlareModel.allCases) {
+          Text($0.description)
+        }
       }
       .pickerStyle(SegmentedPickerStyle())
     }

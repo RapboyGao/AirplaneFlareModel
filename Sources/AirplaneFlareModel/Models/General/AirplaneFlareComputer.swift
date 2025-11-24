@@ -149,9 +149,15 @@ extension AirplaneFlareComputer {
     -> [AirplaneFlarePointData]
   {
     switch model {
-    case .sqrtFunction:
-      return keyPoints(SqrtFunction.self)
-    case .piecewiseLinearProfile:
+    case .exponentialFlareFunction:
+      return keyPoints(ExponentialFlareFunction.self)
+    case .rationalFlareFunction:
+      return keyPoints(RationalFlareFunction.self)
+    case .inverseSqrtFlareFunction:
+      return keyPoints(InverseSqrtFlareFunction.self)
+    case .inverseSquareFlareFunction:
+      return keyPoints(InverseSquareFlareFunction.self)
+    case .piecewiseLinearPlateauFunction:
       return keyPoints(PiecewiseLinearPlateauFunction.self)
     }
   }
