@@ -32,13 +32,3 @@ public protocol TimedFlareFunctionBaseProtocol: Codable, Sendable, Hashable {
   /// 可带入时间(分钟数)
   func y(atX x: Double) -> Double
 }
-
-extension TimedFlareFunctionBaseProtocol {
-  public var minX1: Double {
-    2 * h1 / (y0 + y1)
-  }
-
-  public var maxX1: Double {
-    2 * h1 / y1
-  }
-}
