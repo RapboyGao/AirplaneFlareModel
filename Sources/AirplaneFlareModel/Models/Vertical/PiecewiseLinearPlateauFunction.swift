@@ -88,6 +88,9 @@ public struct PiecewiseLinearPlateauFunction: TimedFlareFunctionBaseProtocol {
 
     /// Total integral ∫₀→x₁ y(x) dx
     public var h1: Double
+    
+    public var minX1: Double { return (2 * h1) / (y0 + y1) }
+    public var maxX1: Double { return h1 / y1 }
 
     public init(y0: Double, y1: Double, x1: Double, h1: Double) {
         self.y0 = y0
